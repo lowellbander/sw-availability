@@ -10,13 +10,13 @@ with open('responses.csv') as csvfile:
     if rowIndex == 0:
       continue # first row is header
     response = {}
-    response['sunday'] = splitAndStrip(row[2])
-    response['monday'] = splitAndStrip(row[3])
-    response['tuesday'] = splitAndStrip(row[4])
-    response['wednesday'] = splitAndStrip(row[5])
-    response['thursday'] = splitAndStrip(row[6])
-    response['friday'] = splitAndStrip(row[7])
-    response['saturday'] = splitAndStrip(row[8])
+    response['Sunday'] = splitAndStrip(row[2])
+    response['Monday'] = splitAndStrip(row[3])
+    response['Tuesday'] = splitAndStrip(row[4])
+    response['Wednesday'] = splitAndStrip(row[5])
+    response['Thursday'] = splitAndStrip(row[6])
+    response['Friday'] = splitAndStrip(row[7])
+    response['Saturday'] = splitAndStrip(row[8])
     name = row[1]
     responses[name] = response
 
@@ -31,11 +31,18 @@ print json.dumps(daysOfWeek, indent=1)
 
 # day -> time -> comrades
 availabilities = {}
-
 for day in daysOfWeek:
-  availabilities[day] = {}
   for time in timesOfDay:
-    availabilities[day][time] = [comrade for comrade in comrades if time in responses[comrade][day]]
+    availabilities[day + ' ' +time] = [comrade for comrade in comrades if time in responses[comrade][day]]
 
 print json.dumps(availabilities, indent=1)
+
+pairings = {}
+
+for slot1 in availabilities:
+  for slot2 in availabilities:
+    pairings[slot1 + ' & ' + slot2] = list(set(availabilities[slot1]).union(availabilities[slot2]))
+    # print len(comradesAvailable)
+
+print json.dumps(pairings, indent=1)
 
