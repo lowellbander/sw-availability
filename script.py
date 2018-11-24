@@ -24,25 +24,25 @@ comrades = responses.keys()
 daysOfWeek = responses[comrades[0]].keys()
 timesOfDay = ['Mornings', 'Afternoons', 'PM Commute (5:30-7pm)', 'Evenings (after 7pm)']
 
-print json.dumps(responses, indent=1)
-print json.dumps(comrades, indent=1)
-print len(comrades)
-print json.dumps(daysOfWeek, indent=1)
-
-# day -> time -> comrades
+# day + time -> comrades
 availabilities = {}
 for day in daysOfWeek:
   for time in timesOfDay:
-    availabilities[day + ' ' +time] = [comrade for comrade in comrades if time in responses[comrade][day]]
-
-print json.dumps(availabilities, indent=1)
+    availabilities[day + ' ' + time] = [comrade for comrade in comrades if time in responses[comrade][day]]
 
 pairings = {}
 
 for slot1 in availabilities:
   for slot2 in availabilities:
+    (slot1, slot2) = sorted([slot1, slot2])
     pairings[slot1 + ' & ' + slot2] = list(set(availabilities[slot1]).union(availabilities[slot2]))
-    # print len(comradesAvailable)
 
-print json.dumps(pairings, indent=1)
+ranked = sorted(pairings.items(), key=lambda pair: -len(pair[1]))
+
+for slots, comrades in ranked[:5]:
+  print '\n{slots}:\n  {n_comrades} ({comrades})\n'.format(**{
+    'slots': slots,
+    'n_comrades': len(comrades),
+    'comrades': comrades
+  }),
 
